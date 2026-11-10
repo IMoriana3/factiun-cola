@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1720">
+<title>Cola FACTIUN</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#14181f;--mut:#5d6675;--line:#e3e6eb;--acc:#d97a00;--acc2:#1f6feb;--ok:#1a7f37;--warn:#b7791f;--bad:#cf222e;--claude:#8250df;--r:12px}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0f1720;--card:#17202b;--ink:#e6e9ee;--mut:#9aa4b2;--line:#263241;--acc:#f0a032;--acc2:#58a6ff;--ok:#3fb950;--warn:#d29922;--bad:#f85149;--claude:#a371f7}}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-bottom:env(safe-area-inset-bottom)}
+header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.bar{max-width:880px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px}
+.logo{font-weight:700;letter-spacing:.02em}.logo span{color:var(--acc)}
+nav{display:flex;gap:4px;margin-left:auto}
+nav button{border:0;background:none;color:var(--mut);padding:8px 10px;border-radius:8px;font:inherit;cursor:pointer}
+nav button.on{background:var(--card);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
+main{max-width:880px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:12px}
+h2{font-size:17px;margin:0 0 12px}h3{font-size:15px;margin:0 0 6px}
+label{display:block;font-size:13px;color:var(--mut);margin:12px 0 6px}
+textarea,input,select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+textarea{min-height:110px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:560px){.row{grid-template-columns:1fr}}
+.seg{display:flex;gap:6px;flex-wrap:wrap}.seg button{flex:1;min-width:64px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:9px 8px;border-radius:10px;font:inherit;cursor:pointer}
+.seg button.on{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc);font-weight:600}
+.btn{border:0;background:var(--acc);color:#111;font:inherit;font-weight:600;padding:11px 16px;border-radius:10px;cursor:pointer}
+.btn.sec{background:var(--bg);color:var(--ink);border:1px solid var(--line);font-weight:500}
+.btn:disabled{opacity:.5}
+.chk{display:flex;gap:10px;align-items:center;margin-top:14px}.chk input{width:auto}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--mut);border-radius:999px;padding:5px 11px;font-size:13px;cursor:pointer}
+.chip.on{color:var(--ink);border-color:var(--ink)}
+.t{display:flex;gap:12px;align-items:flex-start;cursor:pointer}
+.t .q{font-weight:600}.meta{color:var(--mut);font-size:13px;margin-top:3px}
+.badge{white-space:nowrap;font-size:12px;font-weight:600;border-radius:999px;padding:3px 9px;border:1px solid currentColor;margin-left:auto}
+.s-Pendiente,.s-Enviada{color:var(--mut)}.s-Asignada,.s-Extraída,.s-Validada{color:var(--acc2)}.s-Cargada{color:var(--ok)}
+.s-Conflicto{color:var(--warn)}.s-Necesita{color:var(--claude)}.s-Buscado{color:var(--mut)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}@media(max-width:560px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px}.kpi b{display:block;font-size:24px}.kpi span{color:var(--mut);font-size:13px}
+.com{border-top:1px solid var(--line);padding:10px 0;font-size:14px;overflow-wrap:anywhere}.com .who{color:var(--mut);font-size:12px;margin-bottom:4px}
+a{color:var(--acc2)}.mut{color:var(--mut)}.msg{padding:10px 12px;border-radius:10px;margin-top:12px;font-size:14px;background:var(--bg);border:1px solid var(--line)}
+.hide{display:none}.back{background:none;border:0;color:var(--acc2);font:inherit;padding:0;margin-bottom:10px;cursor:pointer}
+pre{white-space:pre-wrap;font:inherit;margin:0}
+</style>
+</head>
+<body>
+<header><div class="bar">
+  <div class="logo">FACTIUN <span>·</span> Cola</div>
+  <nav>
+    <button data-v="nueva" class="on">Nueva</button>
+    <button data-v="cola">Cola</button>
+    <button data-v="panel">Panel</button>
+    <button data-v="ajustes" title="Ajustes">⚙︎</button>
+  </nav>
+</div></header>
+<main>
+
+<section id="v-nueva">
+  <div class="card">
+    <h2>¿Qué quieres investigar?</h2>
+    <textarea id="f-txt" placeholder="Ej.: Arctech SkyLine II — ficha técnica, control y comunicaciones, plantas en España. O pega el enlace de lo que acabas de ver."></textarea>
+    <label>Tipo</label>
+    <div class="seg" id="f-tipo">
+      <button>Empresa</button><button>Tracker / equipo</button><button>Planta</button><button>Persona</button><button>Contrato</button><button class="on">Otro</button>
+    </div>
+    <div class="row">
+      <div><label>Prioridad</label><div class="seg" id="f-pri"><button>A</button><button class="on">B</button><button>C</button></div></div>
+      <div><label>Para</label><div class="seg" id="f-uso"><button>Vender</button><button class="on">Saber</button><button>Construir</button></div></div>
+    </div>
+    <label for="f-url">Enlace (opcional)</label>
+    <input id="f-url" type="url" inputmode="url" placeholder="https://…">
+    <label class="chk"><input type="checkbox" id="f-ahora"> Investigar ahora (si no, entra en la tanda de las 02:30)</label>
+    <div style="margin-top:16px"><button class="btn" id="f-env">Enviar a la cola</button></div>
+    <div id="f-msg" class="msg hide"></div>
+  </div>
+</section>
+
+<section id="v-cola" class="hide">
+  <div class="chips" id="chips"></div>
+  <div id="lista"></div>
+</section>
+
+<section id="v-det" class="hide"><button class="back" id="back">← Volver a la cola</button><div id="det"></div></section>
+
+<section id="v-panel" class="hide"><div id="panel"></div></section>
+
+<section id="v-ajustes" class="hide">
+  <div class="card">
+    <h2>Ajustes</h2>
+    <p class="mut">Token fine-grained de GitHub solo para <b>IMoriana3/factiun-ingesta</b> con permisos Issues (lectura y escritura) y Contents (lectura). Se guarda únicamente en este navegador.</p>
+    <label for="a-tok">Token</label>
+    <input id="a-tok" type="password" autocomplete="off" placeholder="github_pat_…">
+    <div style="margin-top:14px;display:flex;gap:8px"><button class="btn" id="a-save">Guardar</button><button class="btn sec" id="a-del">Borrar de este dispositivo</button></div>
+    <div id="a-msg" class="msg hide"></div>
+  </div>
+</section>
+</main>
+
+<script>
+const REPO = "IMoriana3/factiun-ingesta";
+const MARCA = "<!-- factiun-cola v1 -->";
+const $ = s => document.querySelector(s);
+const store = {get(k){try{return localStorage.getItem(k)}catch(e){return null}}, set(k,v){try{localStorage.setItem(k,v)}catch(e){}}, del(k){try{localStorage.removeItem(k)}catch(e){}}};
+let TOKEN = store.get("factiun_token") || "";
+let ESTADO = null, FILTRO = "Todas";
+
+function esc(s){return String(s ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function md(s){ // markdown mínimo y seguro
+  return esc(s).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>")
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')
+    .replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g,'$1<a href="$2" target="_blank" rel="noopener">$2</a>')
+    .replace(/^### (.*)$/gm,"<h3>$1</h3>").replace(/^- (.*)$/gm,"• $1").replace(/\n/g,"<br>");
+}
+async function api(path, opt={}){
+  if(!TOKEN){ver("ajustes"); throw new Error("Falta el token en Ajustes")}
+  const r = await fetch("https://api.github.com"+path,{...opt,headers:{"Authorization":"Bearer "+TOKEN,"Accept":opt.accept||"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28",...(opt.body?{"Content-Type":"application/json"}:{})}});
+  if(!r.ok){const t=await r.text(); throw new Error(r.status+" "+(JSON.parse(t||"{}").message||t).slice(0,200))}
+  return opt.accept?.includes("raw") ? r.json() : (r.status===204?null:r.json());
+}
+function seg(id){const el=$(id);el.addEventListener("click",e=>{if(e.target.tagName!=="BUTTON")return;el.querySelectorAll("button").forEach(b=>b.classList.remove("on"));e.target.classList.add("on")});return()=>el.querySelector(".on").textContent}
+const tipo=seg("#f-tipo"), pri=seg("#f-pri"), uso=seg("#f-uso");
+function msg(id,t,ok=true){const m=$(id);m.classList.remove("hide");m.style.borderColor=ok?"var(--ok)":"var(--bad)";m.innerHTML=t}
+
+function ver(v){
+  document.querySelectorAll("main>section").forEach(s=>s.classList.add("hide"));
+  $("#v-"+v).classList.remove("hide");
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
+  if(v==="cola") cargarCola(); if(v==="panel") cargarPanel();
+  if(v==="ajustes") $("#a-tok").value = TOKEN ? "••••••••" : "";
+}
+document.querySelector("nav").addEventListener("click",e=>{if(e.target.dataset.v)ver(e.target.dataset.v)});
+
+// ---------- nueva ----------
+$("#f-env").onclick = async () => {
+  const txt=$("#f-txt").value.trim(), url=$("#f-url").value.trim();
+  if(!txt && !url){msg("#f-msg","Escribe qué investigar o pega un enlace.",false);return}
+  const ahora=$("#f-ahora").checked, b=$("#f-env"); b.disabled=true;
+  const titulo=(txt.split("\n")[0]||url).slice(0,110);
+  const body=`${MARCA}\n### Qué investigar\n${txt||url}\n\n### Tipo\n${tipo()}\n\n### Prioridad\n${pri()}\n\n### Uso\n${uso()}\n\n### Enlace\n${url}\n\n### Investigar ahora\n${ahora?"sí":"no"}\n`;
+  try{
+    const i=await api(`/repos/${REPO}/issues`,{method:"POST",body:JSON.stringify({title:titulo,body})});
+    msg("#f-msg",`Enviado (#${i.number}). ${ahora?"Se investiga en unos minutos.":"Entra en la tanda de esta noche."} Te llegará el aviso al móvil.`);
+    $("#f-txt").value="";$("#f-url").value="";$("#f-ahora").checked=false;
+  }catch(e){msg("#f-msg","No se pudo enviar: "+esc(e.message),false)}
+  b.disabled=false;
+};
+
+// ---------- cola ----------
+async function cargarEstado(){
+  let est={tareas:[],ultima_tanda:[],generado:null};
+  try{est=await api(`/repos/${REPO}/contents/estado.json?ref=estado`,{accept:"application/vnd.github.raw+json"})}catch(e){if(!String(e.message).startsWith("404"))throw e}
+  const abiertas=await api(`/repos/${REPO}/issues?state=open&per_page=50`);
+  const conocidas=new Set(est.tareas.map(t=>t["Issue GitHub"]).filter(Boolean));
+  const nuevas=abiertas.filter(i=>!i.pull_request && (i.body||"").includes(MARCA) && !conocidas.has(i.html_url))
+    .map(i=>({"Qué investigar":i.title,"Estado del carril":"Enviada","Issue GitHub":i.html_url,"Prioridad":(i.body.match(/### Prioridad\n(\w)/)||[])[1],"editado":i.created_at}));
+  est.tareas=[...nuevas,...est.tareas]; ESTADO=est; return est;
+}
+function clase(s){return "s-"+String(s||"Pendiente").split(" ")[0]}
+async function cargarCola(){
+  $("#lista").innerHTML='<p class="mut">Cargando…</p>';
+  try{await cargarEstado()}catch(e){$("#lista").innerHTML=`<div class="card">${esc(e.message)}</div>`;return}
+  const estados=["Todas","Enviada","Pendiente","Asignada","Cargada","Conflicto","Necesita Claude","Buscado y no publicado"];
+  $("#chips").innerHTML=estados.map(s=>`<button class="chip ${s===FILTRO?"on":""}" data-s="${esc(s)}">${esc(s)}</button>`).join("");
+  $("#chips").onclick=e=>{if(e.target.dataset.s){FILTRO=e.target.dataset.s;cargarCola()}};
+  const ts=ESTADO.tareas.filter(t=>FILTRO==="Todas"||(t["Estado del carril"]||"Pendiente")===FILTRO);
+  $("#lista").innerHTML = ts.length ? ts.map((t,i)=>`
+    <div class="card t" data-i="${ESTADO.tareas.indexOf(t)}">
+      <div><div class="q">${esc(t["Qué investigar"])}</div>
+      <div class="meta">${[t["Prioridad"]&&"Prioridad "+t["Prioridad"],t["Tipo de objeto"],t["Carril"],t.editado&&new Date(t.editado).toLocaleString("es-ES",{dateStyle:"short",timeStyle:"short"})].filter(Boolean).map(esc).join(" · ")}</div></div>
+      <span class="badge ${clase(t["Estado del carril"])}">${esc(t["Estado del carril"]||"Pendiente")}</span>
+    </div>`).join("") : '<p class="mut">Nada en este estado.</p>';
+  $("#lista").onclick=e=>{const c=e.target.closest("[data-i]");if(c)detalle(ESTADO.tareas[+c.dataset.i])};
+}
+async function detalle(t){
+  ver("det"); $("#v-cola").classList.add("hide");
+  const n=(t["Issue GitHub"]||"").match(/issues\/(\d+)/)?.[1];
+  let h=`<div class="card"><h2>${esc(t["Qué investigar"])}</h2>
+    <div class="meta"><span class="badge ${clase(t["Estado del carril"])}" style="margin:0">${esc(t["Estado del carril"]||"Pendiente")}</span>
+    ${t.url?` · <a href="${esc(t.url)}" target="_blank" rel="noopener">Abrir en Notion</a>`:""}${t["Issue GitHub"]?` · <a href="${esc(t["Issue GitHub"])}" target="_blank" rel="noopener">Issue</a>`:""}</div>
+    ${t["Resultado"]?`<p>${md(t["Resultado"])}</p>`:""}
+    ${t["Motivo de escalado"]?`<p><b>${t["Estado del carril"]==="Conflicto"?"Pregunta":"Motivo"}:</b> ${md(t["Motivo de escalado"])}</p>`:""}</div>`;
+  if(n){
+    h+=`<div class="card"><h3>Historial</h3><div id="coms" class="mut">Cargando…</div>
+      <label for="r-txt">Contestar / aclarar</label><textarea id="r-txt" placeholder="Ej.: es la de Navarra, no la de Chile. Mira también https://…"></textarea>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="r-env">Enviar y reinvestigar</button><button class="btn sec" id="r-ahora">Investigar ahora</button><button class="btn sec" id="r-desc">Descartar</button></div>
+      <div id="r-msg" class="msg hide"></div></div>`;
+  }
+  $("#det").innerHTML=h;
+  if(!n) return;
+  try{
+    const cs=await api(`/repos/${REPO}/issues/${n}/comments?per_page=100`);
+    $("#coms").classList.remove("mut");
+    $("#coms").innerHTML=cs.length?cs.map(c=>`<div class="com"><div class="who">${esc(c.user.type==="Bot"?"Sistema":c.user.login)} · ${new Date(c.created_at).toLocaleString("es-ES",{dateStyle:"short",timeStyle:"short"})}</div>${md(c.body)}</div>`).join(""):"Aún sin movimientos.";
+  }catch(e){$("#coms").textContent=e.message}
+  const enviar=async(texto,ok)=>{try{await api(`/repos/${REPO}/issues/${n}/comments`,{method:"POST",body:JSON.stringify({body:texto})});msg("#r-msg",ok);setTimeout(()=>detalle(t),1500)}catch(e){msg("#r-msg",esc(e.message),false)}};
+  $("#r-env").onclick=()=>{const x=$("#r-txt").value.trim();if(x)enviar(x,"Enviado. La retoma en unos minutos.")};
+  $("#r-ahora").onclick=()=>enviar("ahora","Lanzada. Te llegará el aviso.");
+  $("#r-desc").onclick=()=>{if(confirm("¿Descartar esta investigación?"))enviar("descartar","Descartada.")};
+}
+$("#back").onclick=()=>ver("cola");
+
+// ---------- panel ----------
+async function cargarPanel(){
+  $("#panel").innerHTML='<p class="mut">Cargando…</p>';
+  try{await cargarEstado()}catch(e){$("#panel").innerHTML=`<div class="card">${esc(e.message)}</div>`;return}
+  const c={}; ESTADO.tareas.forEach(t=>{const s=t["Estado del carril"]||"Pendiente";c[s]=(c[s]||0)+1});
+  const ut=ESTADO.ultima_tanda||[], claude=ESTADO.tareas.filter(t=>t["Estado del carril"]==="Necesita Claude"), preg=ESTADO.tareas.filter(t=>t["Estado del carril"]==="Conflicto");
+  const k=(n,l)=>`<div class="kpi"><b>${n}</b><span>${l}</span></div>`;
+  $("#panel").innerHTML=`
+    <div class="kpis">${k((c.Pendiente||0)+(c.Enviada||0),"en espera")}${k(c.Cargada||0,"cargadas")}${k(preg.length,"te preguntan")}${k(claude.length,"para Claude")}</div>
+    <div class="card" style="margin-top:12px"><h3>Última tanda</h3><p class="mut">${ESTADO.generado?new Date(ESTADO.generado).toLocaleString("es-ES"):"Aún no se ha ejecutado ninguna."}</p>
+      ${ut.map(r=>`<div class="com"><b>${esc(r.estado)}</b> · ${esc(r.tarea)}${r.escritos?` · ${r.escritos} datos`:""}${r.error?`<br><span class="mut">${esc(r.error)}</span>`:""}</div>`).join("")}</div>
+    ${preg.length?`<div class="card"><h3>Te preguntan</h3>${preg.map(t=>`<div class="com">${esc(t["Qué investigar"])}<br><span class="mut">${esc(t["Motivo de escalado"]||"")}</span></div>`).join("")}</div>`:""}
+    ${claude.length?`<div class="card"><h3>Para Claude</h3>${claude.map(t=>`<div class="com">${esc(t["Qué investigar"])}<br><span class="mut">${esc(t["Motivo de escalado"]||"")}</span></div>`).join("")}</div>`:""}`;
+}
+
+// ---------- ajustes ----------
+$("#a-save").onclick=async()=>{
+  const v=$("#a-tok").value.trim(); if(!v||v.startsWith("•"))return;
+  TOKEN=v;
+  try{await api(`/repos/${REPO}`);store.set("factiun_token",v);msg("#a-msg","Token guardado y comprobado.")}
+  catch(e){TOKEN="";msg("#a-msg","El token no funciona: "+esc(e.message),false)}
+};
+$("#a-del").onclick=()=>{store.del("factiun_token");TOKEN="";$("#a-tok").value="";msg("#a-msg","Borrado de este dispositivo.")};
+if(!TOKEN) ver("ajustes");
+</script>
+</body>
+</html>
